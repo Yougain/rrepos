@@ -30,7 +30,10 @@ function ask_yes_no {
 }
 
 
-[ "`id -ru`" != "0" ] && (echo "Please use sudo." && exit 1)
+if [ "`id -u`" != "0" ];then
+    echo "Please use sudo."
+    exit 1
+fi
 
 VER=${0##*-}
 if [ -z "$VER" ]; then
@@ -76,6 +79,6 @@ if ask_yes_no "Uninstall current ruby and install new ruby.";then
         rpm -ivh --nodeps ../rpms/${name2file[$i]}
     done
     gem list | awk '{print $1}' > ~/.default_ruby_gems.$VER
-    GEMS_TO_INST=(`cat ~/.reinstall_ruby_gems ~/.default_ruby_gems|sort|uniq -u`)
+    GEMS_TO_INST=(`grep -v -f ~/.reinstall_ruby_gems ~/.default_ruby_gems.$VER`)
     gem install ${GEMS_TO_INST[@]}
 fi
