@@ -63,7 +63,7 @@ if (( $# > 0 )); then
 fi
 
 if ask_yes_no "Uninstall current ruby and install new ruby.";then
-    GEMS=(`(gem list | awk '{print $1}';cat ~.reinstall_ruby_gems 2>/dev/null)|sort|uniq`)
+    GEMS=(`(gem list | awk '{print $1}';cat ~/.reinstall_ruby_gems 2>/dev/null)|sort|uniq`)
     for i in "${GEMS[@]}"; do
         echo $i >> ~/.reinstall_ruby_gems
     done
@@ -75,6 +75,7 @@ if ask_yes_no "Uninstall current ruby and install new ruby.";then
     for i in rubygems ruby-default-gems rubygem-rdoc ruby-doc rubygem-irb rubygem-bundler; do
         rpm -ivh --nodeps ../rpms/${name2file[$i]}
     done
-    GEMS_TO_INST=(`cat .~/reinstall_ruby_gems`)
+    gem list | awk '{print $1}' > ~/.default_ruby_gems.$VER
+    GEMS_TO_INST=(`cat ~/.reinstall_ruby_gems ~/.default_ruby_gems|sort|uniq -u`)
     gem install ${GEMS_TO_INST[@]}
 fi
